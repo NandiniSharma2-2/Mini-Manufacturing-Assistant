@@ -1,0 +1,242 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Administrator | Manufacturing AI</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500;1,600&family=DM+Sans:wght@400;500;600;700&display=swap");
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+      background: #111310;
+      color: #f3efe6;
+    }
+    h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; }
+    header {
+      padding: 22px 5%;
+      border-bottom: 1px solid #30343a;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+    .brand { color: #c7a975; font-weight: 600; letter-spacing: .04em; }
+    main { max-width: 1200px; margin: 35px auto; padding: 0 20px; }
+    h1 { font-size: 32px; }
+    h2 { font-size: 20px; margin-top: 0; }
+    .muted { color: #aeb2bb; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
+      gap: 20px;
+    }
+    .panel {
+      background: linear-gradient(145deg, #1b1d18, #121411);
+      border: 1px solid rgba(211, 190, 151, .2);
+      border-radius: 9px;
+      padding: 24px;
+      margin-bottom: 22px;
+    }
+    label {
+      display: block;
+      font-size: 12px;
+      color: #d6ad70;
+      margin: 17px 0 7px;
+      font-weight: bold;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      background: #111310;
+      color: #fff;
+      border: 1px solid #454952;
+      border-radius: 5px;
+      font: inherit;
+    }
+    textarea { min-height: 80px; resize: vertical; }
+    button {
+      padding: 12px 18px;
+      background: #c7a975;
+      color: #101216;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+    }
+    button:disabled { opacity: .6; cursor: wait; }
+    .secondary {
+      background: #30343b;
+      color: #fff;
+    }
+    .danger { background: #7d3121; color: #fff3df; }
+    .recovery-list { margin-top: 20px; border-top: 1px solid #343841; padding-top: 14px; }
+    .recovery-list summary { color: #d6ad70; cursor: pointer; font-size: 13px; }
+    .recovery-list[open] summary { margin-bottom: 12px; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      padding: 13px;
+      text-align: left;
+      border-bottom: 1px solid #343841;
+      font-size: 14px;
+    }
+    th { color: #d6ad70; }
+    .message { margin-top: 12px; min-height: 20px; }
+    .success { color: #8dd9a8; }
+    .error { color: #ff9999; }
+    .actions { display: flex; gap: 10px; align-items: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">MANUFACTURING.AI / ADMIN</div>
+    <div class="actions">
+      <a href="inspection-admin.html" class="secondary" style="padding:12px 18px; text-decoration:none;">
+        Inspection management
+      </a>
+      <span id="adminName"></span>
+      <button class="secondary" id="logoutBtn">Logout</button>
+    </div>
+  </header>
+
+  <main id="dashboard" hidden>
+    <h1>Administrator Dashboard</h1>
+    <p class="muted">
+      Manage manufacturing machines and technical manuals.
+    </p>
+
+    <div class="grid">
+      <section class="panel">
+        <h2>Register Machine</h2>
+        <form id="machineForm">
+          <label for="machineId">MACHINE ID</label>
+          <input id="machineId" placeholder="M-CNC300" required>
+
+          <label for="machineName">MACHINE NAME</label>
+          <input id="machineName" placeholder="CNC Milling Machine" required>
+
+          <label for="machineModel">MODEL</label>
+          <input id="machineModel" placeholder="CNC-300" required>
+
+          <label for="machineDescription">DESCRIPTION</label>
+          <textarea id="machineDescription"></textarea>
+
+          <button type="submit">Register Machine</button>
+          <p class="message" id="machineMessage" role="status"></p>
+        </form>
+      </section>
+
+      <section class="panel">
+        <h2>Upload PDF Manual</h2>
+        <form id="manualForm">
+          <label for="manualMachine">SELECT MACHINE</label>
+          <select id="manualMachine" required>
+            <option value="">Select machine</option>
+          </select>
+
+          <label for="documentId">DOCUMENT ID</label>
+          <input id="documentId" placeholder="CNC-OPS-01" required>
+
+          <label for="revision">REVISION</label>
+          <input id="revision" placeholder="1.0" required>
+
+          <label for="pdfFile">PDF DOCUMENT</label>
+          <input id="pdfFile" type="file"
+                 accept=".pdf,application/pdf" required>
+
+          <button type="submit">Upload Manual</button>
+          <p class="message" id="manualMessage" role="status"></p>
+        </form>
+      </section>
+    </div>
+
+    <section class="panel">
+      <h2>Registered Machines</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Machine ID</th>
+              <th>Name</th>
+              <th>Model</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="machineTable"></tbody>
+        </table>
+      </div>
+      <details class="recovery-list">
+        <summary>Recover inactive machines</summary>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Machine ID</th>
+                <th>Name</th>
+                <th>Model</th>
+                <th>Description</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inactiveMachineTable"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+
+    <section class="panel">
+      <div class="actions" style="justify-content:space-between">
+        <h2>Manual Library</h2>
+        <button class="secondary" id="refreshBtn">
+          Refresh Status
+        </button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Machine / Product</th>
+              <th>Document ID</th>
+              <th>Revision</th>
+              <th>Filename</th>
+              <th>Processing</th>
+              <th>Chunks</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="manualTable"></tbody>
+        </table>
+      </div>
+      <details class="recovery-list">
+        <summary>Recover inactive manuals</summary>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Machine / Product</th>
+                <th>Document ID</th>
+                <th>Revision</th>
+                <th>Filename</th>
+                <th>Processing</th>
+                <th>Chunks</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="inactiveManualTable"></tbody>
+          </table>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <main id="accessMessage">Verifying administrator access...</main>
+
+ <script src="../../js/api.js"></script>
+<script src="../../js/admin-dashboard.js?v=20261103-recovery"></script>
+</body>
+</html>

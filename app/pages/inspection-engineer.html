@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engineer Inspection Dashboard | Manufacturing AI</title>
+  <link rel="stylesheet" href="../css/inspection.css?v=20261103-review-poll">
+</head>
+<body data-role="ENGINEER">
+  <header>
+    <a class="brand" href="../../index.html" aria-label="Manufacturing AI home">
+      <span class="brand-mark">M</span>
+      <span>MANUFACTURING<span class="brand-accent">.AI</span> / ENGINEER</span>
+    </a>
+    <div class="actions">
+      <span id="userName"></span>
+      <a class="button secondary" href="assistant.html">Ask machine assistant</a>
+      <button id="refreshBtn" class="secondary">Refresh</button>
+      <button id="downloadReport">Download my report</button>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </div>
+  </header>
+  <main id="accessMessage">Verifying engineer access...</main>
+  <main id="dashboard" hidden>
+    <section class="workspace-hero" aria-labelledby="workspaceTitle">
+      <img class="workspace-hero-image"
+           src="../../assets/images/CNC Milling Sparks in a Modern Factory.png"
+           alt="CNC milling machine cutting metal and producing sparks">
+      <div class="workspace-hero-content">
+        <p class="workspace-kicker">Secure workspace / engineer</p>
+        <h1 id="workspaceTitle">INSPECT<br><span>WITH CONFIDENCE.</span></h1>
+        <p>Capture product images, review AI-assisted findings, and track your inspection history.</p>
+      </div>
+    </section>
+    <section class="stats">
+      <div class="stat"><span class="stat-icon">01</span>My inspections<strong id="totalInspections">0</strong><span class="stat-caption">Images submitted</span></div>
+      <div class="stat"><span class="stat-icon">02</span>AI flagged defective<strong id="defectiveCount">0</strong><span class="stat-caption">Initial model result</span></div>
+      <div class="stat"><span class="stat-icon">03</span>Pending review<strong id="pendingReviewCount">0</strong><span class="stat-caption">Awaiting supervisor</span></div>
+      <div class="stat"><span class="stat-icon">04</span>Reviewed<strong id="reviewedCount">0</strong><span class="stat-caption">Supervisor completed</span></div>
+    </section>
+    <section class="panel category-dashboard" aria-labelledby="categoryDashboardTitle">
+      <div class="category-dashboard-heading">
+        <div>
+          <p class="workspace-kicker">Inspection overview</p>
+          <h2 id="categoryDashboardTitle">Images by product category</h2>
+          <p class="muted small">Categories come from each product record. AI results remain Normal or Defective.</p>
+        </div>
+        <span class="category-total"><strong id="categoryImageTotal">0</strong><span>images in view</span></span>
+      </div>
+      <div id="categoryOverview" class="category-overview" aria-live="polite">
+        <p class="muted small">Category totals will appear after your first inspection.</p>
+      </div>
+    </section>
+    <section class="analytics-grid" aria-label="Visual inspection analysis">
+      <article class="panel analytics-panel">
+        <p class="workspace-kicker">Quality snapshot</p>
+        <h2>Inspection outcome analysis</h2>
+        <p class="muted small">Outcome distribution for the currently selected inspection view.</p>
+        <div id="outcomeChart" class="chart-container"></div>
+      </article>
+    </section>
+    <section class="panel visual-inspection-panel" aria-labelledby="visualInspectionTitle">
+      <div class="actions">
+        <div>
+          <p class="workspace-kicker">Latest uploads</p>
+          <h2 id="visualInspectionTitle">Visual inspection</h2>
+        </div>
+        <span class="muted small">Scores update after analysis; supervisor reviews sync automatically.</span>
+      </div>
+      <div id="visualInspectionGallery" class="visual-inspection-gallery" aria-live="polite">
+        <p class="muted small">Your latest inspection images will appear here.</p>
+      </div>
+    </section>
+    <section class="panel">
+      <p class="workspace-kicker">01 / start an inspection</p>
+      <h2>Inspect a Product</h2>
+      <p class="muted">Choose the product, add clear photos, and submit them for an AI-assisted visual check.</p>
+      <form id="uploadForm">
+        <div class="upload-layout">
+          <div class="upload-product-field">
+            <label for="inspectionProduct">Product</label>
+            <select id="inspectionProduct" data-product-select required></select>
+            <p class="small muted">Select the matching product before uploading its images.</p>
+          </div>
+          <div class="upload-content">
+            <input id="inspectionImages" class="visually-hidden" type="file" accept="image/jpeg,image/png" multiple>
+            <div id="imageDropzone" class="image-dropzone" role="button" tabindex="0" aria-controls="inspectionImages" aria-label="Choose or drop product images">
+              <span class="upload-icon" aria-hidden="true">
+                <svg viewBox="0 0 48 48" fill="none">
+                  <path d="M24 32V9m0 0-9 9m9-9 9 9M9 29v10h30V29" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </span>
+              <strong>Drop product images here</strong>
+              <span class="muted">or choose files from your device</span>
+              <button id="chooseImages" class="secondary choose-images" type="button">Choose images</button>
+              <span class="upload-hint">JPEG or PNG · 1–10 images · 5 MiB each. Invalid files are saved as failed attempts.</span>
+            </div>
+            <div id="imagePreview" class="image-preview-grid" aria-live="polite"></div>
+          </div>
+        </div>
+        <div class="upload-submit-row">
+          <p class="small muted">AI results are an initial visual screening and may need supervisor review.</p>
+          <button id="uploadButton" type="submit">Run inspection <span aria-hidden="true">↗</span></button>
+        </div>
+        <p id="uploadMessage" class="message" role="status"></p>
+      </form>
+    </section>
+    <section class="panel">
+      <div class="actions">
+        <div>
+          <p class="workspace-kicker">02 / inspection records</p>
+          <h2>My Inspection History</h2>
+        </div>
+        <span id="inspectionCount" class="muted"></span>
+      </div>
+      <div class="filters">
+        <div class="field"><label for="historyMachine">Machine</label><select id="historyMachine" data-machine-select></select></div>
+        <div class="field"><label for="historyCategory">Image category</label><select id="historyCategory"><option value="">All categories</option></select></div>
+        <div class="field"><label for="historyProduct">Product</label><select id="historyProduct" data-product-select></select></div>
+        <div class="field"><label for="historyStatus">Status</label><select id="historyStatus"><option value="">All statuses</option><option>QUEUED</option><option>PROCESSING</option><option>COMPLETED</option><option>REVIEWED</option><option>FAILED</option></select></div>
+        <div class="field"><label for="historyPrediction">AI prediction</label><select id="historyPrediction"><option value="">All predictions</option><option>NORMAL</option><option>DEFECTIVE</option><option>UNCERTAIN</option></select></div>
+        <div class="field"><label for="historyFrom">From</label><input id="historyFrom" type="date"></div>
+        <div class="field"><label for="historyTo">To</label><input id="historyTo" type="date"></div>
+        <button id="filterBtn" type="button">Filter</button>
+      </div>
+      <p id="inspectionMessage" class="message" role="status"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Product</th><th>Machine</th><th>Image category</th><th>Image</th><th>Status</th><th>AI prediction</th><th>Confidence score</th><th>Defect probability</th><th>Supervisor review / final result</th></tr></thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="muted disclaimer">AI predictions and confidence values are estimates for review, not a certified defect inspection. A supervisor can confirm or correct each completed result.</p>
+  </main>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/inspection-dashboard.js?v=20261103-review-poll"></script>
+</body>
+</html>

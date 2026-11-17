@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engineer AI Assistant | Manufacturing AI</title>
+  <link rel="stylesheet" href="../css/inspection.css?v=20261103-warm">
+  <link rel="stylesheet" href="../css/assistant.css">
+</head>
+<body data-role="ENGINEER">
+  <header>
+    <a class="brand" href="../../index.html" aria-label="Manufacturing AI home">
+      <span class="brand-mark">M</span>
+      <span>MANUFACTURING<span class="brand-accent">.AI</span> / ENGINEER</span>
+    </a>
+    <div class="actions">
+      <span id="userName" class="muted"></span>
+      <a class="button secondary" href="inspection-engineer.html">Visual inspection</a>
+      <button id="logoutBtn" class="secondary" type="button">Logout</button>
+    </div>
+  </header>
+
+  <main id="accessMessage">Verifying engineer access...</main>
+  <main id="dashboard" hidden>
+    <section class="workspace-hero" aria-labelledby="workspaceTitle">
+      <img class="workspace-hero-image"
+           src="../../assets/images/CNC Milling Sparks in a Modern Factory.png"
+           alt="CNC milling machine cutting metal and producing sparks">
+      <div class="workspace-hero-content">
+        <p class="workspace-kicker">Secure workspace / engineer</p>
+        <h1 id="workspaceTitle">ASK YOUR<br><span>MACHINE EXPERT.</span></h1>
+        <p>Choose a machine and ask questions grounded in its technical manuals. Answers include the source pages used.</p>
+      </div>
+    </section>
+
+    <section class="panel assistant-panel">
+      <div class="assistant-section-heading">
+        <p class="workspace-kicker">01 / machine knowledge</p>
+        <h2>Ask about a machine</h2>
+        <p class="muted">Select the relevant machine so the assistant searches its manuals—not another machine’s documentation.</p>
+      </div>
+
+      <div id="questionForm">
+        <div class="field">
+          <label for="machine">Selected machine</label>
+          <select id="machine" disabled>
+            <option value="">Loading available machines...</option>
+          </select>
+        </div>
+        <div class="field">
+          <label for="question">Your question</label>
+          <textarea id="question" rows="4" maxlength="1000"
+            placeholder="For example: What is the normal hydraulic pressure range?"
+            disabled></textarea>
+          <div class="question-hint">
+            <span>Ask about operation, maintenance, specifications, or troubleshooting.</span>
+            <span id="characterCount">0 / 1000</span>
+          </div>
+        </div>
+        <div class="assistant-actions">
+          <p id="askStatus" class="message muted" role="status" aria-live="polite"></p>
+          <button id="askButton" type="button" disabled>Ask assistant <span aria-hidden="true">↗</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel answer-panel" id="resultPanel" aria-live="polite" hidden>
+      <p class="workspace-kicker">02 / manual-grounded response</p>
+      <div class="answer-heading">
+        <h2>Answer</h2>
+        <span id="answerMachine" class="machine-badge"></span>
+      </div>
+      <div id="answer" class="answer-content"></div>
+      <div id="sourcesSection" class="sources-section" hidden>
+        <h3>Manual references</h3>
+        <div id="sources"></div>
+      </div>
+    </section>
+
+    <p class="muted disclaimer">
+      Use the cited manual pages to verify critical information. Follow approved
+      site safety and lockout/tagout procedures for hazardous work.
+    </p>
+  </main>
+
+  <script src="../../js/api.js?v=20261103-answer-recovery2"></script>
+  <script src="../../js/engineer-assistant.js?v=20261103-answer-recovery2"></script>
+</body>
+</html>

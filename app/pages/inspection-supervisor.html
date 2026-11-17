@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Supervisor Inspection Dashboard | Manufacturing AI</title>
+  <link rel="stylesheet" href="../css/inspection.css?v=20261103-review-poll">
+</head>
+<body data-role="SUPERVISOR">
+  <header>
+    <a class="brand" href="../../index.html" aria-label="Manufacturing AI home">
+      <span class="brand-mark">M</span>
+      <span>MANUFACTURING<span class="brand-accent">.AI</span> / SUPERVISOR</span>
+    </a>
+    <div class="actions">
+      <span id="userName"></span>
+      <button id="refreshBtn" class="secondary">Refresh</button>
+      <button id="downloadReport">Download report</button>
+      <button id="logoutBtn" class="secondary">Logout</button>
+    </div>
+  </header>
+  <main id="accessMessage">Verifying supervisor access...</main>
+  <main id="dashboard" hidden>
+    <section class="workspace-hero" aria-labelledby="workspaceTitle">
+      <img class="workspace-hero-image"
+           src="../../assets/images/CNC Milling Sparks in a Modern Factory.png"
+           alt="CNC milling machine cutting metal and producing sparks">
+      <div class="workspace-hero-content">
+        <p class="workspace-kicker">Secure workspace / supervisor</p>
+        <h1 id="workspaceTitle">REVIEW.<br><span>REFINE. RELEASE.</span></h1>
+        <p>Review every engineer inspection, compare AI estimates, and record the final quality decision.</p>
+      </div>
+    </section>
+    <section class="stats">
+      <div class="stat">Total inspections<strong id="totalInspections">0</strong></div>
+      <div class="stat">AI flagged defective<strong id="defectiveCount">0</strong></div>
+      <div class="stat">AI uncertain<strong id="uncertainCount">0</strong></div>
+      <div class="stat">Pending review<strong id="pendingReviewCount">0</strong></div>
+      <div class="stat">Reviewed<strong id="reviewedCount">0</strong></div>
+      <div class="stat">Defect rate estimate<strong id="defectRate">0%</strong></div>
+    </section>
+    <section class="panel category-dashboard" aria-labelledby="categoryDashboardTitle">
+      <div class="category-dashboard-heading">
+        <div>
+          <p class="workspace-kicker">Inspection overview</p>
+          <h2 id="categoryDashboardTitle">Images by product category</h2>
+          <p class="muted small">Categories come from each product record. AI results remain Normal or Defective.</p>
+        </div>
+        <span class="category-total"><strong id="categoryImageTotal">0</strong><span>images in view</span></span>
+      </div>
+      <div id="categoryOverview" class="category-overview" aria-live="polite">
+        <p class="muted small">Category totals will appear after the first inspection.</p>
+      </div>
+    </section>
+    <section class="analytics-grid" aria-label="Visual inspection analysis">
+      <article class="panel analytics-panel">
+        <p class="workspace-kicker">Quality snapshot</p>
+        <h2>Inspection outcome analysis</h2>
+        <p class="muted small">Outcome distribution for the currently selected inspection view.</p>
+        <div id="outcomeChart" class="chart-container"></div>
+      </article>
+    </section>
+    <section class="panel visual-inspection-panel" aria-labelledby="visualInspectionTitle">
+      <div class="actions">
+        <div>
+          <p class="workspace-kicker">Latest uploads</p>
+          <h2 id="visualInspectionTitle">Visual inspection</h2>
+        </div>
+        <span class="muted small">Select an image to inspect it at full size.</span>
+      </div>
+      <div id="visualInspectionGallery" class="visual-inspection-gallery" aria-live="polite">
+        <p class="muted small">Latest inspection images will appear here.</p>
+      </div>
+    </section>
+    <section class="panel">
+      <h2>Inspection and Defect Statistics by Engineer</h2>
+      <div id="engineerStats" class="muted"></div>
+    </section>
+    <section class="panel" aria-labelledby="machineInspectionStatsTitle">
+      <div class="actions">
+        <div>
+          <p class="workspace-kicker">Machine quality analysis</p>
+          <h2 id="machineInspectionStatsTitle">Inspection results by machine</h2>
+        </div>
+        <span class="muted small">Based on the current inspection filters.</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Machine</th>
+              <th>Inspections</th>
+              <th>Normal</th>
+              <th>AI flagged defective</th>
+              <th>Pending review</th>
+              <th>Reviewed</th>
+            </tr>
+          </thead>
+          <tbody id="machineInspectionStats">
+            <tr><td colspan="6" class="table-empty">Machine analysis will appear here.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+    <section class="panel">
+      <div class="actions">
+        <h2>All Engineer Inspections</h2>
+        <span id="inspectionCount" class="muted"></span>
+      </div>
+      <div class="filters">
+        <div class="field"><label for="historyMachine">Machine</label><select id="historyMachine" data-machine-select></select></div>
+        <div class="field"><label for="historyCategory">Image category</label><select id="historyCategory"><option value="">All categories</option></select></div>
+        <div class="field"><label for="historyStatus">Status</label><select id="historyStatus"><option value="">All statuses</option><option>QUEUED</option><option>PROCESSING</option><option>COMPLETED</option><option>REVIEWED</option><option>FAILED</option></select></div>
+        <div class="field"><label for="historyPrediction">AI prediction</label><select id="historyPrediction"><option value="">All predictions</option><option>NORMAL</option><option>DEFECTIVE</option><option>UNCERTAIN</option></select></div>
+        <div class="field"><label for="historyFrom">From</label><input id="historyFrom" type="date"></div>
+        <div class="field"><label for="historyTo">To</label><input id="historyTo" type="date"></div>
+        <button id="filterBtn" type="button">Filter</button>
+      </div>
+      <p id="inspectionMessage" class="message" role="status"></p>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Date</th><th>Engineer</th><th>Product</th><th>Machine</th><th>Image category</th><th>Image</th><th>Status</th><th>Original AI prediction</th><th>Confidence score</th><th>Defect probability</th><th>Final reviewed result</th><th>Review</th></tr></thead>
+          <tbody id="inspectionTable"></tbody>
+        </table>
+      </div>
+    </section>
+    <p class="muted disclaimer">AI confidence is an uncalibrated model estimate, not a measured probability. Review images and use established quality procedures before accepting an inspection result.</p>
+  </main>
+  <script src="../../js/api.js"></script>
+  <script src="../../js/inspection-dashboard.js?v=20261103-review-poll"></script>
+</body>
+</html>

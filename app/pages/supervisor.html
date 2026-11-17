@@ -1,0 +1,209 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta http-equiv="refresh" content="0;url=inspection-supervisor.html">
+  <script>window.location.replace("inspection-supervisor.html");</script>
+  <title>Supervisor | Manufacturing AI</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: #101216;
+      color: #f5f5f5;
+      font-family: "DM Sans", "Segoe UI", sans-serif;
+    }
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 22px 5%;
+      border-bottom: 1px solid #343841;
+    }
+    .brand { color: #d6ad70; font-weight: bold; }
+    main { max-width: 1250px; margin: 32px auto; padding: 0 20px; }
+    .muted { color: #adb3bf; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 16px;
+      margin: 24px 0;
+    }
+    .card, .panel {
+      background: #1b1e24;
+      border: 1px solid #343841;
+      border-radius: 10px;
+      padding: 22px;
+    }
+    .card strong {
+      display: block;
+      font-size: 32px;
+      margin-top: 12px;
+      color: #d6ad70;
+    }
+    .panel { margin-bottom: 22px; }
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: end;
+    }
+    .filter { flex: 1; min-width: 160px; }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 12px;
+      color: #d6ad70;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      background: #101216;
+      color: #fff;
+      border: 1px solid #484c55;
+      border-radius: 5px;
+    }
+    button {
+      background: #d6ad70;
+      border: 0;
+      border-radius: 5px;
+      padding: 12px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .secondary { background: #343841; color: white; }
+    .table-wrap { overflow-x: auto; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td {
+      text-align: left;
+      padding: 13px;
+      border-bottom: 1px solid #343841;
+      font-size: 13px;
+      vertical-align: top;
+    }
+    th { color: #d6ad70; }
+    .answer { max-width: 370px; white-space: pre-wrap; }
+    .question { max-width: 280px; }
+    .status { font-weight: bold; }
+    .answered { color: #85d6a1; }
+    .insufficient { color: #ffb37f; }
+    .error { color: #ff9898; }
+    h2 { font-size: 20px; }
+    .toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+    }
+    @media(max-width: 700px) {
+      header { gap: 12px; }
+      .toolbar { align-items: start; flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="brand">MANUFACTURING.AI / SUPERVISOR</div>
+    <button id="logoutBtn" class="secondary">Logout</button>
+  </header>
+
+  <main id="accessMessage">
+    Verifying supervisor access...
+  </main>
+
+  <main id="dashboard" hidden>
+    <h1>Supervisor Dashboard</h1>
+    <p class="muted">
+      Monitor Engineer questions, AI performance and unresolved issues.
+    </p>
+
+    <section class="stats">
+      <div class="card">
+        Total Questions
+        <strong id="totalQuestions">0</strong>
+      </div>
+      <div class="card">
+        Answered
+        <strong id="answeredQuestions">0</strong>
+      </div>
+      <div class="card">
+        Insufficient Evidence
+        <strong id="unansweredQuestions">0</strong>
+      </div>
+      <div class="card">
+        Answer Rate
+        <strong id="answerRate">0%</strong>
+      </div>
+      <div class="card">
+        Average Response Time
+        <strong id="averageTime">0s</strong>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Filter Question History</h2>
+      <div class="filters">
+        <div class="filter">
+          <label for="machineFilter">MACHINE</label>
+          <select id="machineFilter">
+            <option value="">All Machines</option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="statusFilter">STATUS</label>
+          <select id="statusFilter">
+            <option value="">All Statuses</option>
+            <option value="ANSWERED">Answered</option>
+            <option value="INSUFFICIENT_EVIDENCE">
+              Insufficient Evidence
+            </option>
+          </select>
+        </div>
+        <div class="filter">
+          <label for="fromDate">FROM DATE</label>
+          <input type="date" id="fromDate">
+        </div>
+        <div class="filter">
+          <label for="toDate">TO DATE</label>
+          <input type="date" id="toDate">
+        </div>
+        <button id="applyFilters">Apply Filters</button>
+        <button id="clearFilters" class="secondary">Clear</button>
+      </div>
+      <p id="filterMessage" role="status"></p>
+    </section>
+
+    <section class="panel">
+      <div class="toolbar">
+        <h2>Engineer Question History</h2>
+        <button id="refreshBtn" class="secondary">Refresh</button>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Engineer</th>
+              <th>Machine</th>
+              <th>Question</th>
+              <th>AI Answer</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody id="historyTable"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel">
+      <h2>Questions by Machine</h2>
+      <div id="machineStatistics" class="muted"></div>
+    </section>
+  </main>
+
+  <script src="../../js/api.js"></script>
+  <script src="../../js/supervisor-dashboard.js"></script>
+</body>
+</html>
